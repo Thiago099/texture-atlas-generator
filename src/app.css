@@ -1,0 +1,17 @@
+body{
+  background-color: black;
+  color: white;
+}
+canvas{
+  border: 1px solid #ccc;
+  width: 500px;
+}
+
+a{
+  color: white;
+  padding: 5px;
+}
+
+#links{
+  display: inline;
+}
