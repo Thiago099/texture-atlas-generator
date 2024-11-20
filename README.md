@@ -18,4 +18,4 @@ Output:
 ├── 📄 chunkUvs.json This is the UV of each texture, where each corner of the chunk will be the corner of your mesh (useful if your texture are something like icons so you don't have to worry about the aspect ratio)
 └── 📄 exactUvs.json This is the UV of each texture, where each corner of your texture will be the corner of your mesh
 
-![image](https://github.com/user-attachments/assets/9a6d7c1d-ebc5-42e1-b81b-173e0ba1a8fe)
+![image](https://github.com/user-attachments/assets/4aac7282-42eb-47e1-86af-76e519349968)
