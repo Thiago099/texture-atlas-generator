@@ -8,10 +8,25 @@ let width =  $state(1000),
     padding = $state(10), 
     size = $state(64);
 
-let view = "reference"
+let view = $state("reference")
 
 function Update(){
   Render(
+    true,
+    false,
+    Number(width),
+    Number(height),
+    Number(padding),
+    Number(size),
+    textureCanvas,
+    referenceCanvas,
+    fileInput
+  )
+}
+function Download(){
+  Render(
+    false,
+    true,
     Number(width),
     Number(height),
     Number(padding),
@@ -45,12 +60,14 @@ onMount(() => {
       <input bind:this={fileInput} type="file" id="fileInput" accept="image/*" multiple name="heel">
     </div>
     <div class="content">
+      <h3>{view == "reference"? "Reference image" : "Final image"}</h3>
+      <div>
         <button onclick={()=>view="reference"}>View Reference</button>
         <button onclick={()=>view="final"}>View Final</button>
+      </div>
         <canvas style="display: {view == "reference"?"none":"block"};"  bind:this={textureCanvas}></canvas>
         <canvas style="display: {view == "final"?"none":"block"};"   bind:this={referenceCanvas}></canvas>
-      <label for="fileInput">Download the assets:</label>
-      <div id="links"></div>
+      <button onclick={Download}>Download assets</button>
     </div>
   </div>
 

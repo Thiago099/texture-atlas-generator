@@ -1,3 +1,4 @@
+import JSZip from "jszip"
 function fitSize(image,x,y, size){
     const rectWidth = size;
     const rectHeight = size;
@@ -62,33 +63,56 @@ function loadImage(file) {
 function drawIndexText(ctx, x, y,uvs, size){
     ctx.font = (size/3)+'px sans-serif';
     const textString = uvs.length
-    const textWidth = ctx.measureText(textString ).width;
+    ctx.textAlign = "start";
+    ctx.textBaseline = "hanging";
     ctx.fillStyle = "#000000";
-    ctx.fillText(textString , x+5+2, y+10+2);
-    ctx.fillText(textString , x+5-2, y+10-2);
-    ctx.fillText(textString , x+5-2, y+10+2);
-    ctx.fillText(textString , x+5+2, y+10-2);
+    ctx.fillText(textString , x+2, y+2);
+    ctx.fillText(textString , x-2, y+2);
+    ctx.fillText(textString , x-2, y+2);
+    ctx.fillText(textString , x+2, y+2);
     ctx.fillStyle = "#ffff00";
-    ctx.fillText(textString , x+5, y+10);
+    ctx.fillText(textString , x, y);
 }
-function createCanvasDownloadLink(canvas, fileName, text){
-    var link = document.createElement('a');
-    link.download = fileName;
-    link.href = canvas.toDataURL()
-    link.innerHTML = text
-    document.getElementById("links").appendChild(link)
-}
-function createObjectDownloadLink(content, fileName, text){
+async function createCanvasDownloadLink(zip, canvas, fileName){
+    zip.file(fileName, await new Promise(resolve=> canvas.toBlob(resolve)), {base64: true});
 
+}
+async function createObjectDownloadLink(zip, content, fileName){
     const blob = new Blob([JSON.stringify(content)], { type: 'text/plain' });
+    zip.file(fileName, blob, {base64: true});
+}
+async function DownlaodZip(textureCanvas, referenceCanvas, uvs) {
+    const zip = new JSZip();
 
-    var link = document.createElement('a');
-    link.download = fileName;
-    link.href = window.URL.createObjectURL(blob);
-    link.innerHTML = text
-    document.getElementById("links").appendChild(link)
-}3212
-function renderImages(images, width, height, pad, size, textureCanvas, referenceCanvas){
+    await createCanvasDownloadLink(zip, textureCanvas,"texture.png")
+    await createCanvasDownloadLink(zip, referenceCanvas,"reference.png")
+    await createObjectDownloadLink(zip, uvs, "metadata.json")
+    zip.generateAsync({ type: "blob" })
+    .then(function (content) {
+      var link = document.createElement("a");
+      link.href = URL.createObjectURL(content);
+      link.download = "files.zip"; 
+      link.click(); 
+    });
+}
+function renderImages(doScaleDown, doDownload, images, width, height, pad, size, textureCanvas, referenceCanvas){
+
+    const scale = 1000 / ((width + height) / 2)
+
+    console.log(scale)
+
+    if(doScaleDown){
+        width*=scale
+        height*=scale
+        pad*=scale
+        size*=scale
+    }
+    
+    textureCanvas.width = width
+    textureCanvas.height = height
+    referenceCanvas.width = width
+    referenceCanvas.height = height
+
     let x = pad
     let y = pad
     const ctx = textureCanvas.getContext("2d");
@@ -120,23 +144,20 @@ function renderImages(images, width, height, pad, size, textureCanvas, reference
             y += size + pad
         }
     }
-    document.getElementById("links").innerHTML = ""
-    createCanvasDownloadLink(textureCanvas,"texture.png", "download texture")
-    createCanvasDownloadLink(referenceCanvas,"reference.png", "download reference")
-    createObjectDownloadLink(uvs, "metadata.json", "download metadata")
+    if(doDownload){
+        DownlaodZip(textureCanvas, referenceCanvas, uvs)
+    }
+
 }
 
-function Render(width, height, pad, size, textureCanvas, referenceCanvas, fileInput){
-    textureCanvas.width = width
-    textureCanvas.height = height
-    referenceCanvas.width = width
-    referenceCanvas.height = height
+function Render(doScaleDown, doDownload, width, height, pad, size, textureCanvas, referenceCanvas, fileInput){
+
     const images = []
     for(const item of fileInput.files){
         images.push(loadImage(item))
     }
     Promise.all(images)
-    .then((images)=>renderImages(images,width, height, pad, size, textureCanvas, referenceCanvas))
+    .then((images)=>renderImages(doScaleDown, doDownload, images,width, height, pad, size, textureCanvas, referenceCanvas))
 }
 
 export {Render}
