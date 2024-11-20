@@ -81,12 +81,13 @@ async function createObjectDownloadLink(zip, content, fileName){
     const blob = new Blob([JSON.stringify(content)], { type: 'text/plain' });
     zip.file(fileName, blob, {base64: true});
 }
-async function DownlaodZip(textureCanvas, referenceCanvas, uvs) {
+async function DownlaodZip(textureCanvas, referenceCanvas, uvs, exactUvs) {
     const zip = new JSZip();
 
     await createCanvasDownloadLink(zip, textureCanvas,"texture.png")
     await createCanvasDownloadLink(zip, referenceCanvas,"reference.png")
-    await createObjectDownloadLink(zip, uvs, "metadata.json")
+    await createObjectDownloadLink(zip, uvs, "chunkUvs.json")
+    await createObjectDownloadLink(zip, exactUvs, "exactUvs.json")
     zip.generateAsync({ type: "blob" })
     .then(function (content) {
       var link = document.createElement("a");
@@ -98,8 +99,6 @@ async function DownlaodZip(textureCanvas, referenceCanvas, uvs) {
 function renderImages(doScaleDown, doDownload, images, width, height, pad, size, textureCanvas, referenceCanvas){
 
     const scale = 1000 / ((width + height) / 2)
-
-    console.log(scale)
 
     if(doScaleDown){
         width*=scale
@@ -119,7 +118,8 @@ function renderImages(doScaleDown, doDownload, images, width, height, pad, size,
     const ctx2 = referenceCanvas.getContext("2d");
     ctx.clearRect(0,0,width,height)
     ctx2.clearRect(0,0,width,height)
-    const uvs = []
+    const chunckUvs = []
+    const exactUvs = []
 
     for(let i = 0; i < images.length;i++){
         if(images[i] == null){
@@ -129,13 +129,22 @@ function renderImages(doScaleDown, doDownload, images, width, height, pad, size,
         ctx.drawImage(images[i], offsetX, offsetY, drawWidth, drawHeight);
         ctx2.drawImage(images[i], offsetX, offsetY, drawWidth, drawHeight);
 
-        drawIndexText(ctx2, x, y, uvs, size)
+        drawIndexText(ctx2, x, y, chunckUvs, size)
 
-        uvs.push({
+        chunckUvs.push({
             u1: x / width,
             v1: y / height,
             u2: (x + size) / width,
-            v2: (y + size) / height 
+            v2: (y + size) / height,
+            aspectRatio: 1
+        })
+
+        exactUvs.push({
+            u1: offsetX / width,
+            v1: offsetY / height,
+            u2: (x + drawWidth) / width,
+            v2: (y + drawHeight) / height,
+            aspectRatio: images[i].width / images[i].height
         })
         
         x += size + pad
@@ -145,7 +154,7 @@ function renderImages(doScaleDown, doDownload, images, width, height, pad, size,
         }
     }
     if(doDownload){
-        DownlaodZip(textureCanvas, referenceCanvas, uvs)
+        DownlaodZip(textureCanvas, referenceCanvas, chunckUvs, exactUvs)
     }
 
 }
