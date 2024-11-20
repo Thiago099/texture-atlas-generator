@@ -2,11 +2,10 @@ body{
   background-color: black;
   color: white;
 }
-canvas{
-  border: 1px solid #ccc;
-  width: 500px;
-}
 
+*{
+  box-sizing: border-box;
+}
 a{
   color: white;
   padding: 5px;

@@ -59,8 +59,8 @@ function loadImage(file) {
     });
 }
 
-function drawIndexText(ctx, x, y,uvs){
-    ctx.font = '20px sans-serif';
+function drawIndexText(ctx, x, y,uvs, size){
+    ctx.font = (size/3)+'px sans-serif';
     const textString = uvs.length
     const textWidth = ctx.measureText(textString ).width;
     ctx.fillStyle = "#000000";
@@ -87,12 +87,14 @@ function createObjectDownloadLink(content, fileName, text){
     link.href = window.URL.createObjectURL(blob);
     link.innerHTML = text
     document.getElementById("links").appendChild(link)
-}
+}3212
 function renderImages(images, width, height, pad, size, textureCanvas, referenceCanvas){
     let x = pad
     let y = pad
     const ctx = textureCanvas.getContext("2d");
     const ctx2 = referenceCanvas.getContext("2d");
+    ctx.clearRect(0,0,width,height)
+    ctx2.clearRect(0,0,width,height)
     const uvs = []
 
     for(let i = 0; i < images.length;i++){
@@ -103,7 +105,7 @@ function renderImages(images, width, height, pad, size, textureCanvas, reference
         ctx.drawImage(images[i], offsetX, offsetY, drawWidth, drawHeight);
         ctx2.drawImage(images[i], offsetX, offsetY, drawWidth, drawHeight);
 
-        drawIndexText(ctx2, x, y, uvs)
+        drawIndexText(ctx2, x, y, uvs, size)
 
         uvs.push({
             u1: x / width,
