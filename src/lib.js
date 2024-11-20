@@ -132,10 +132,10 @@ function renderImages(doScaleDown, doDownload, images, width, height, pad, size,
         drawIndexText(ctx2, x, y, chunckUvs, size)
 
         chunckUvs.push({
-            u1: x / width,
-            v1: y / height,
-            u2: (x + size) / width,
-            v2: (y + size) / height,
+            u1: (x-pad) / width,
+            v1: (y - pad) / height,
+            u2: (x + size + pad) / width,
+            v2: (y + size + pad) / height,
             aspectRatio: 1
         })
 
