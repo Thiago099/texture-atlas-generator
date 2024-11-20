@@ -1,6 +1,6 @@
 # Texture atlas generator
 
-Here is what the program looks like, you can fill the parameters on the right and it will generate a low-resolution preview of your atlas, after you are done configuring you can click on download to download a high-resolution zip with your assets
+Here is what the program looks like, you can fill in the parameters on the left and it will generate a low-resolution preview of your atlas, after you are done configuring you can click on download to download a high-resolution zip with your assets
 
 ![image](https://github.com/user-attachments/assets/84e1b9bd-173e-4850-b437-3cd4174db448)
 
@@ -13,10 +13,10 @@ Output:
 ```text
 📁 Generated Zip File
 │
-├── 🖼️ reference.png  This is your atlas overlayed with the index of each element on the generated json files
-├── 🖼️ texture.png This is the final atlas for you to import on your program
+├── 🖼️ reference.png  This is your atlas overlayed with the index of each element on the generated JSON files
+├── 🖼️ texture.png This is the final atlas for you to import into your program
 ├── 📄 chunkUvs.json This is the UV of each texture, where each corner of the chunk will be the corner of your mesh
-|      (useful if your texture are something like icons so you don't have to worry about the aspect ratio)
+|      (useful if your texture is something like icons so you don't have to worry about the aspect ratio)
 └── 📄 exactUvs.json This is the UV of each texture, where each corner of your texture will be the corner of your mesh
 ```
 
